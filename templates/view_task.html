@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Task Details</h1>
+<div class="task-details">
+    <p><strong>Description:</strong> {{ task.description }}</p>
+    <p><strong>Due Date:</strong> {{ task.due_date }}</p>
+    <p><strong>Status:</strong> {{ 'Completed' if task.completed else 'Pending' }}</p>
+</div>
+<a href="{{ url_for('main_routes.dashboard') }}" class="btn btn-primary mt-3">Back to Dashboard</a>
+{% endblock %}

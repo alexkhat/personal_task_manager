@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Add New Task</h2>
+    <form method="POST" action="{{ url_for('main_routes.new_task') }}" class="mt-4">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control") }}
+        </div>
+        <div class="form-group mt-3">
+            {{ form.due_date.label(class="form-label") }}
+            {{ form.due_date(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary mt-4">Add Task</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Edit Task</h1>
+<form method="POST" action="{{ url_for('main_routes.edit_task', task_id=task.id) }}">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        <label for="description" class="form-label">Task Description</label>
+        {{ form.description(class="form-control", id="description", rows=3, value=task.description) }}
+    </div>
+    <div class="mb-3">
+        <label for="due_date" class="form-label">Due Date</label>
+        {{ form.due_date(class="form-control", id="due_date", type="date", value=task.due_date) }}
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a href="{{ url_for('main_routes.dashboard') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
