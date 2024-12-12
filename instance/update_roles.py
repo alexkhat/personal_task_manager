@@ -1,6 +1,6 @@
 import sqlite3
 
-# Connect to the SQLite database (adjust the path if necessary)
+# Connect to the SQLite database
 conn = sqlite3.connect(r'C:\Users\Abdullah Mohammed\PycharmProjects\personal_task_manager\instance\site.db')
 cursor = conn.cursor()
 
