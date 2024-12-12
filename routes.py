@@ -16,10 +16,15 @@ def home():
 @main_routes.route('/dashboard')
 @login_required
 def dashboard():
+    # Query tasks again to ensure you get the latest data
     tasks = Task.query.filter_by(user_id=current_user.id).all()
     total_tasks = len(tasks)
-    drafts = sum(1 for task in tasks if not task.completed and not task.due_date)
-    return render_template('dashboard.html', total_tasks=total_tasks, drafts=drafts, tasks=tasks)
+    drafts = sum(1 for task in tasks if task.status == 'Draft')  # Example if you use status field
+
+    # Filter tasks based on status if required
+    pending_tasks = [task for task in tasks if task.status == 'Pending']  # Adjust if needed
+
+    return render_template('dashboard.html', tasks=tasks, total_tasks=total_tasks, drafts=drafts, pending_tasks=pending_tasks)
 
 # Register Route: User registration
 @main_routes.route('/register', methods=['GET', 'POST'])
@@ -59,24 +64,37 @@ def login():
 
 # Logout Route: User logout
 @main_routes.route('/logout')
+@login_required
 def logout():
     logout_user()
+    flash("You have been logged out.", "info")
     return redirect(url_for('main_routes.login'))
 
 # New Task Route: Add new task
 @main_routes.route('/new_task', methods=['GET', 'POST'])
 @login_required
 def new_task():
-    form = TaskForm()
-    if form.validate_on_submit():
+    form = TaskForm()  # Initialize form
+    if form.validate_on_submit():  # If form passes validation
         try:
-            task = Task(description=form.description.data, due_date=form.due_date.data, user_id=current_user.id)
+            task = Task(
+                description=form.description.data,
+                due_date=form.due_date.data,
+                priority=form.priority.data,
+                status=form.status.data,  # Capture status from the form
+                user_id=current_user.id
+            )
             db.session.add(task)
             db.session.commit()
             flash('Task added successfully!', 'success')
-        except ValueError:
-            flash('Invalid date format. Please use YYYY-MM-DD.', 'danger')
-        return redirect(url_for('main_routes.dashboard'))
+            return redirect(url_for('main_routes.dashboard'))
+        except Exception as e:
+            db.session.rollback()  # Rollback changes if an error occurs
+            flash(f'Error adding task: {e}', 'danger')
+            return redirect(url_for('main_routes.new_task'))
+    else:
+        if request.method == 'POST':  # If form submission failed
+            flash('There were errors in your form. Please check the fields and try again.', 'danger')
     return render_template('new_task.html', form=form)
 
 # Complete Task Route: Mark task as completed
@@ -105,23 +123,33 @@ def delete_task(task_id):
     flash('Task deleted successfully.', 'success')
     return redirect(url_for('main_routes.dashboard'))
 
-# Edit Task Route: Edit task details
+#Edit Task Route
 @main_routes.route('/edit_task/<int:task_id>', methods=['GET', 'POST'])
 @login_required
 def edit_task(task_id):
-    task = Task.query.get_or_404(task_id)
-    if task.user_id != current_user.id:
+    task = Task.query.get_or_404(task_id)  # Get the task by ID
+
+    if task.user_id != current_user.id:  # Ensure the current user owns the task
         flash('You do not have permission to edit this task.', 'danger')
         return redirect(url_for('main_routes.dashboard'))
-    form = TaskForm()
-    if form.validate_on_submit():
-        task.description = form.description.data
-        task.due_date = form.due_date.data
-        db.session.commit()
-        flash('Task updated successfully!', 'success')
-        return redirect(url_for('main_routes.dashboard'))
-    form.description.data = task.description
-    form.due_date.data = task.due_date
+
+    form = TaskForm(obj=task)  # Populate the form with existing data
+
+    if form.validate_on_submit():  # Handle form submission
+        try:
+            task.description = form.description.data
+            task.due_date = form.due_date.data
+            task.priority = form.priority.data
+            task.status = form.status.data  # Update status field
+            db.session.commit()  # Commit changes to the database
+            flash("Task updated successfully.", "success")
+            return redirect(url_for('main_routes.dashboard'))  # Redirect to dashboard
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Error updating task: {e}", "danger")
+    elif request.method == 'POST':
+        flash("There were errors in the form. Please check and try again.", "danger")
+
     return render_template('edit_task.html', form=form, task=task)
 
 # View Task Route: View task details

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, DateField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, DateField, SelectField
+from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=30)])
@@ -16,6 +16,16 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class TaskForm(FlaskForm):
-    description = TextAreaField('Task Description', validators=[DataRequired()])
+    description = StringField('Description', validators=[DataRequired()])
     due_date = DateField('Due Date', format='%Y-%m-%d', validators=[DataRequired()])
-    submit = SubmitField('Add Task')
+    priority = SelectField(
+        'Priority',
+        choices=[('low', 'Low'), ('medium', 'Medium'), ('high', 'High')],
+        validators=[DataRequired()]
+    )
+    status = SelectField(
+        'Status',
+        choices=[('Draft', 'Draft'), ('In Progress', 'In Progress'), ('Completed', 'Completed')],
+        validators=[DataRequired()]
+    )
+    submit = SubmitField('Save Changes')

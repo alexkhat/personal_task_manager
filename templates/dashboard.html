@@ -1,37 +1,60 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <h1>Dashboard</h1>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Dashboard</h1>
 
-    <div class="stats">
-        <p><strong>Total Tasks:</strong> {{ total_tasks }}</p>
-        <p><strong>Drafts:</strong> {{ drafts }}</p>
+    <!-- Task Statistics -->
+    <div class="row text-center mb-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="card bg-light shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Total Tasks</h5>
+                    <p class="display-6">{{ total_tasks }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card bg-light shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Drafts</h5>
+                    <p class="display-6">{{ drafts }}</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <h3>Your Tasks</h3>
+    <!-- Task List -->
+    <h3 class="mb-3">Your Tasks</h3>
     <ul class="list-group">
         {% for task in tasks %}
-            <li class="list-group-item {% if task.completed %}bg-success text-white{% else %}bg-warning text-dark{% endif %}">
+            <li class="list-group-item d-flex justify-content-between align-items-center {% if task.completed %}list-group-item-success{% else %}list-group-item-warning{% endif %}">
+                <div class="task-info">
+                    <strong>{{ task.description }}</strong>
+                    <br>
+                    <small class="text-muted">Due: {{ task.due_date }}</small>
+                </div>
+
                 <div>
-                    <strong>{{ task.description }}</strong> - Due: {{ task.due_date }}
                     <span class="badge {% if task.completed %}bg-success{% else %}bg-warning{% endif %}">
                         {% if task.completed %}Completed{% else %}Pending{% endif %}
                     </span>
                 </div>
 
-                <!-- Action Buttons with colors -->
-                <div class="mt-2">
-                    <a href="{{ url_for('main_routes.edit_task', task_id=task.id) }}" class="btn btn-primary btn-sm">Edit</a>
-                    <a href="{{ url_for('main_routes.complete_task', task_id=task.id) }}" class="btn btn-success btn-sm {% if task.completed %}disabled{% endif %}">Complete</a>
-                    <a href="{{ url_for('main_routes.delete_task', task_id=task.id) }}" class="btn btn-danger btn-sm">Delete</a>
+                <div class="btn-group">
+                    <a href="{{ url_for('main_routes.edit_task', task_id=task.id) }}" class="btn btn-sm btn-outline-secondary" aria-label="Edit Task">Edit</a>
+                    <a href="{{ url_for('main_routes.complete_task', task_id=task.id) }}" class="btn btn-sm btn-outline-success {% if task.completed %}disabled{% endif %}" aria-label="Complete Task">Complete</a>
+                    <a href="{{ url_for('main_routes.delete_task', task_id=task.id) }}" class="btn btn-sm btn-outline-danger" aria-label="Delete Task">Delete</a>
                 </div>
             </li>
         {% else %}
-            <li class="list-group-item">No tasks available.</li>
+            <li class="list-group-item text-center">No tasks available.</li>
         {% endfor %}
     </ul>
 
-    <a href="{{ url_for('main_routes.new_task') }}" class="btn btn-primary mt-3">Create New Task</a>
+    <!-- Create New Task Button -->
+    <div class="d-flex justify-content-center mt-4">
+        <a href="{{ url_for('main_routes.new_task') }}" class="btn btn-primary btn-lg" aria-label="Create New Task">Create New Task</a>
+    </div>
 </div>
 {% endblock %}

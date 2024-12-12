@@ -1,3 +1,4 @@
+from email.policy import default
 from extensions import db
 from flask_login import UserMixin
 
@@ -13,5 +14,7 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(255), nullable=False)
     due_date = db.Column(db.DateTime, nullable=True)
+    priority = db.Column(db.String(20), nullable=False)
     completed = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    status = db.Column(db.String(20), default='Draft')

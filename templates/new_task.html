@@ -2,18 +2,48 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="text-center">Add New Task</h2>
-    <form method="POST" action="{{ url_for('main_routes.new_task') }}" class="mt-4">
-        {{ form.hidden_tag() }}
-        <div class="form-group">
-            {{ form.description.label(class="form-label") }}
-            {{ form.description(class="form-control") }}
+    <h2 class="text-center mb-4">Create New Task</h2>
+    <form method="POST" action="{{ url_for('main_routes.new_task') }}">
+        {{ form.hidden_tag() }}  <!-- CSRF Token -->
+
+        <!-- Task Description Field -->
+        <div class="mb-3">
+            <label for="{{ form.description.id }}" class="form-label">Task Description</label>
+            {{ form.description(class="form-control", placeholder="Enter task description") }}
+            {% for error in form.description.errors %}
+                <small class="text-danger">{{ error }}</small>
+            {% endfor %}
         </div>
-        <div class="form-group mt-3">
-            {{ form.due_date.label(class="form-label") }}
+
+        <!-- Due Date Field -->
+        <div class="mb-3">
+            <label for="{{ form.due_date.id }}" class="form-label">Due Date</label>
             {{ form.due_date(class="form-control") }}
+            {% for error in form.due_date.errors %}
+                <small class="text-danger">{{ error }}</small>
+            {% endfor %}
         </div>
-        <button type="submit" class="btn btn-primary mt-4">Add Task</button>
+
+        <!-- Priority Field -->
+        <div class="mb-3">
+            <label for="{{ form.priority.id }}" class="form-label">Priority</label>
+            {{ form.priority(class="form-control") }}
+            {% for error in form.priority.errors %}
+                <small class="text-danger">{{ error }}</small>
+            {% endfor %}
+        </div>
+
+        <!-- Status Field -->
+        <div class="mb-3">
+            <label for="{{ form.status.id }}" class="form-label">Status</label>
+            {{ form.status(class="form-control") }}
+            {% for error in form.status.errors %}
+                <small class="text-danger">{{ error }}</small>
+            {% endfor %}
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary w-100">Add Task</button>
     </form>
 </div>
 {% endblock %}

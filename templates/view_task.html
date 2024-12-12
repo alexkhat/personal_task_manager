@@ -1,11 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Task Details</h1>
-<div class="task-details">
-    <p><strong>Description:</strong> {{ task.description }}</p>
-    <p><strong>Due Date:</strong> {{ task.due_date }}</p>
-    <p><strong>Status:</strong> {{ 'Completed' if task.completed else 'Pending' }}</p>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Task Details</h1>
+
+    <!-- Task Details Card -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Task Information</h5>
+
+            <p><strong>Description:</strong> {{ task.description }}</p>
+            <p><strong>Due Date:</strong> {{ task.due_date }}</p>
+            <p><strong>Status:</strong> {{ 'Completed' if task.completed else 'Pending' }}</p>
+        </div>
+    </div>
+
+    <!-- Back to Dashboard Button -->
+    <div class="text-center mt-4">
+        <a href="{{ url_for('main_routes.dashboard') }}" class="btn btn-primary w-100">Back to Dashboard</a>
+    </div>
 </div>
-<a href="{{ url_for('main_routes.dashboard') }}" class="btn btn-primary mt-3">Back to Dashboard</a>
 {% endblock %}
