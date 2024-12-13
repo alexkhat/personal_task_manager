@@ -19,10 +19,10 @@ def dashboard():
     # Query tasks again to ensure you get the latest data
     tasks = Task.query.filter_by(user_id=current_user.id).all()
     total_tasks = len(tasks)
-    drafts = sum(1 for task in tasks if task.status == 'Draft')  # Example if you use status field
+    drafts = sum(1 for task in tasks if task.status == 'Draft') 
 
     # Filter tasks based on status if required
-    pending_tasks = [task for task in tasks if task.status == 'Pending']  # Adjust if needed
+    pending_tasks = [task for task in tasks if task.status == 'Pending']  
 
     return render_template('dashboard.html', tasks=tasks, total_tasks=total_tasks, drafts=drafts, pending_tasks=pending_tasks)
 
